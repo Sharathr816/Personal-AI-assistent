@@ -1,0 +1,9 @@
+faster-whisper
+sounddevice
+numpy
+webrtcvad-wheels
+piper-tts
+pynput
+emoji
+ollama
+noisereduce
