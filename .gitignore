@@ -33,5 +33,6 @@ Thumbs.db
 temp/
 tmp/
 
-# test folders
+# testers
 tested/
+test.py
