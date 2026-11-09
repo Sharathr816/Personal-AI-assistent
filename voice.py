@@ -1,6 +1,6 @@
 import re
 import time
-import llm
+import conversation_manager
 
 # import sounddevice as sd
 # from audio_config import INPUT_DEVICE, OUTPUT_DEVICE
@@ -23,7 +23,7 @@ def main():
     tts.start() 
 
     # Warm up your existing Qwen model.
-    llm.warmup()
+    conversation_manager.warmup()
 
     print("\nMio is ready! Speak to start.")
     print("Say 'goodbye Mio' to exit.\n")
@@ -68,16 +68,15 @@ def main():
                 break
 
             # ----------------------------------------
-            # 3. LLM -> TTS
+            # 3. convo_manager -> LLM -> TTS
             # ----------------------------------------
 
             start = time.perf_counter()
 
-            # Every generated LLM chunk is forwarded
-            # immediately to TTS.
-            llm.chat(
+            # Processing to find memory relevant stuffs to store/retrive
+            conversation_manager.process_message(
                 user_text,
-                on_chunk=tts.feed # Pass feed method to chat function as parameter
+                on_chunk=tts.feed
             )
 
             # Flush incomplete final sentence.

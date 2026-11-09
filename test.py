@@ -29,73 +29,73 @@
 
 
 # test audio preprocessing
-import sounddevice as sd
-import numpy as np
-import noisereduce as nr
-import wave
+# import sounddevice as sd
+# import numpy as np
+# import noisereduce as nr
+# import wave
 
-SAMPLE_RATE = 16000
-DURATION = 5
-
-
-def preprocess_audio(audio):
-    # Noise reduction
-    audio = nr.reduce_noise(
-        y=audio,
-        sr=SAMPLE_RATE,
-        stationary=False,
-        prop_decrease=0.90,
-        time_mask_smooth_ms=100,
-        freq_mask_smooth_hz=200
-    )
-
-    # Volume normalization
-    rms = np.sqrt(np.mean(audio ** 2) + 1e-10)
-
-    target_rms = 0.16
-    gain = min(target_rms / rms, 8.0)
-
-    audio *= gain
-
-    # Prevent clipping
-    peak = np.max(np.abs(audio))
-    if peak > 0.95:
-        audio *= 0.95 / peak
-
-    return audio
+# SAMPLE_RATE = 16000
+# DURATION = 5
 
 
-def save_wav(filename, audio):
-    audio_int16 = np.clip(
-        audio * 32768, -32768, 32767
-    ).astype(np.int16)
+# def preprocess_audio(audio):
+#     # Noise reduction
+#     audio = nr.reduce_noise(
+#         y=audio,
+#         sr=SAMPLE_RATE,
+#         stationary=False,
+#         prop_decrease=0.90,
+#         time_mask_smooth_ms=100,
+#         freq_mask_smooth_hz=200
+#     )
 
-    with wave.open(filename, "wb") as wav:
-        wav.setnchannels(1)
-        wav.setsampwidth(2)
-        wav.setframerate(SAMPLE_RATE)
-        wav.writeframes(audio_int16.tobytes())
+#     # Volume normalization
+#     rms = np.sqrt(np.mean(audio ** 2) + 1e-10)
+
+#     target_rms = 0.16
+#     gain = min(target_rms / rms, 8.0)
+
+#     audio *= gain
+
+#     # Prevent clipping
+#     peak = np.max(np.abs(audio))
+#     if peak > 0.95:
+#         audio *= 0.95 / peak
+
+#     return audio
 
 
-print("Recording... Speak normally!")
+# def save_wav(filename, audio):
+#     audio_int16 = np.clip(
+#         audio * 32768, -32768, 32767
+#     ).astype(np.int16)
 
-recording = sd.rec(
-    int(DURATION * SAMPLE_RATE),
-    samplerate=SAMPLE_RATE,
-    channels=1,
-    dtype="float32"
-)
+#     with wave.open(filename, "wb") as wav:
+#         wav.setnchannels(1)
+#         wav.setsampwidth(2)
+#         wav.setframerate(SAMPLE_RATE)
+#         wav.writeframes(audio_int16.tobytes())
 
-sd.wait()
 
-original = recording.flatten()
+# print("Recording... Speak normally!")
 
-processed = preprocess_audio(original.copy())
+# recording = sd.rec(
+#     int(DURATION * SAMPLE_RATE),
+#     samplerate=SAMPLE_RATE,
+#     channels=1,
+#     dtype="float32"
+# )
 
-save_wav("original2.wav", original)
-save_wav("processed2.wav", processed)
+# sd.wait()
 
-print("Saved original.wav and processed.wav")
+# original = recording.flatten()
+
+# processed = preprocess_audio(original.copy())
+
+# save_wav("original2.wav", original)
+# save_wav("processed2.wav", processed)
+
+# print("Saved original.wav and processed.wav")
 
 
 
@@ -178,3 +178,57 @@ print("Saved original.wav and processed.wav")
 
 # gc.collect()
 # torch.cuda.empty_cache()
+
+# MEmory testing
+import memory
+
+# Save
+# m = memory.save_memory("explicit", "I am building Mio.")
+
+# # Retrieve
+# print(memory.get_memory(m.id))
+
+# # Update
+# memory.update_memory(m.id, content="I am developing Mio.")
+
+# List
+print(memory.get_all_memories())
+
+# Delete
+# memory.delete_memory(m.id)
+
+
+# import memory
+
+# test_memories = [
+#     "I love Python.",
+#     "I am good at Python backend development.",
+#     "I enjoy building AI applications.",
+#     "I prefer dark mode.",
+#     "I love sweets.",
+#     "I keep sweets with me everytime.",
+#     "I enjoy running.",
+#     "I like learning new technologies.",
+#     "I use VS Code for development.",
+#     "I am interested in machine learning.",
+#     "I enjoy building personal AI assistants.",
+#     "I prefer practical project-based learning.",
+#     "I love listening to music.",
+#     "I enjoy reading books.",
+#     "I want to improve my coding skills.",
+#     "I am interested in Docker.",
+#     "I enjoy working with Linux.",
+#     "I prefer simple explanations.",
+#     "I am learning about LLMs.",
+#     "I want to build my own AI ecosystem."
+# ]
+
+# for content in test_memories:
+#     saved = memory.save_memory(
+#         category="explicit",
+#         content=content
+#     )
+#     print(f"Saved ID {saved.id}: {saved.content}")
+
+# print("\nTotal explicit memories:",
+#       len(memory.get_all_memories(category="explicit")))
