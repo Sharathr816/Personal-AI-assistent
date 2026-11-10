@@ -7,3 +7,6 @@ pynput
 emoji
 ollama
 noisereduce
+pydantic
+playwright
+pywin32

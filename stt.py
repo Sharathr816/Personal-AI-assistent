@@ -202,22 +202,18 @@ def transcribe(audio_bytes):
         audio,
         language="en",
         beam_size=5, # Whisper explores more candidate sequences(Sentences) before selecting one
-        initial_prompt="Mio is a friendly companion. "
-                       "This is a casual conversation. "
-                       "The name Mio is spelled M-I-O.",
+        initial_prompt="Mio - My personal AI assistent.",
         condition_on_previous_text=False,
         vad_filter=False,
 
         # To remove uneccesary segments of whisper when no audio input given
-        # no_speech_threshold=0.6,
-        # log_prob_threshold=-1.0,
-        # compression_ratio_threshold=2.4
+        no_speech_threshold=0.6,
+        log_prob_threshold=-1.0,
+        compression_ratio_threshold=2.4
     )
 
     ignored_phrases = {
-    "mio is a friendly companion.",
-    "this is a casual conversation.",
-    "the name mio is spelled m-i-o."
+    "Mio - My personal AI assistent."
     }
     # faster-whisper returns a lazy generator.
     text = []

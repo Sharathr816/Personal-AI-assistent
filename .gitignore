@@ -33,6 +33,6 @@ Thumbs.db
 temp/
 tmp/
 
-# testers
+
 tested/
-test.py
+notes/
