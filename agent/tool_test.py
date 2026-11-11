@@ -278,14 +278,38 @@
 
 # Application opening testings
 
-from agent.application_tools import (
-    search_applications,
-    open_application,
-)
+# from agent.application_tools import (
+#     search_applications,
+#     open_application,
+# )
 
-# First, discover shortcuts beginning with S.
-# print(search_applications("s"))
+# # First, discover shortcuts beginning with S.
+# # print(search_applications("s"))
 
-# Then test launching using a path returned by the search.
+# # Then test launching using a path returned by the search.
 
-print(open_application(r"C:\Users\Public\Desktop\Steam.lnk"))
+# print(open_application(r"C:\Users\Public\Desktop\Steam.lnk"))
+
+# application closing testing
+
+
+
+# from agent.application_tools import close_application
+
+# # print(close_application(
+# #     pid=4704,
+# #     exe_path=r"C:\Program Files\WindowsApps\Microsoft.WindowsStore_22609.1401.13.0_x64__8wekyb3d8bbwe\WinStore.App.exe"
+# # ))
+
+# from agent.application_tools import search_running_applications
+
+# print(search_running_applications())
+
+# print(close_application(
+#     pid=30704,  # Replace with actual PID
+#     exe_path=r"C:\Program Files\WindowsApps\microsoft.windowsnotepad_11.2607.14.0_x64__8wekyb3d8bbwe\Notepad\Notepad.exe"
+# ))
+
+
+
+

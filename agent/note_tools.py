@@ -24,6 +24,7 @@ def write_note(title: str, content: str) -> str:
     NOTES_DIR.mkdir(parents=True, exist_ok=True)
 
     # Convert title into a safe filename
+    print("\nWriting note📝")
     filename = re.sub(
         r'[<>:"/\\|?*\x00-\x1f]',
         "_",
@@ -42,6 +43,7 @@ def write_note(title: str, content: str) -> str:
 
     # Save content
     path.write_text(content, encoding="utf-8")
+    print("\nDone Writing😄")
     return f"Note successfully saved: {path}"
 
 
@@ -60,12 +62,15 @@ def open_note(path: str) -> str:
 
     # Prevent access outside the notes directory
     if not note_path.is_relative_to(notes_root):
+        print("\nCan't access note😞")
         raise ValueError("Access denied: path outside notes directory.")
 
     # Verify that the target exists and is a file
     if not note_path.exists() or not note_path.is_file():
+        print("\nCan't find note🤔")
         raise FileNotFoundError(f"Note not found: {note_path}")
 
     # Open using Windows Notepad
     subprocess.Popen(["notepad.exe", str(note_path)])
+    print("\nOpened it, read all you want😄")
     return f"Opened note: {note_path.name}"

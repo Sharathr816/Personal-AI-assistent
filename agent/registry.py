@@ -17,7 +17,9 @@ from agent.browser_tools import (
 
 from agent.application_tools import (
     search_applications,
-    open_application
+    open_application,
+    search_running_applications,
+    close_application
 )
 
 
@@ -52,6 +54,13 @@ class OpenApplicationArgs(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     shortcut_path: str = Field(min_length=1, max_length=2048)
     exe_path: str | None = Field(default=None, max_length=2048)
+
+
+# Close apps
+class CloseApplicationArgs(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    pid: int = Field(gt=0)
+    exe_path: str = Field(min_length=1, max_length=2048)
 
 def register_tool(name, description, args_model, function):
     TOOL_REGISTRY[name] = {
@@ -168,7 +177,7 @@ register_tool(
 register_tool(
     name="search_applications",
     description=(
-        "Search Windows application shortcuts by their prefix letter. "
+        "Search Windows application shortcuts by their first letter. "
         "Use this when the user asks to find or open an installed application. "
         "Returns application names and shortcut paths."
     ),
@@ -184,4 +193,26 @@ register_tool(
     ),
     args_model=OpenApplicationArgs,
     function=open_application
+)
+#Closing
+register_tool(
+    name="search_running_applications",
+    description=(
+        "Discover currently running applications. "
+        "Requires no arguments. Returns grouped application names, "
+        "PIDs, executable paths and process counts. "
+        "Use before closing an application."
+    ),
+    args_model=NoArguments,
+    function=search_running_applications
+)
+register_tool(
+    name="close_application",
+    description=(
+        "Request graceful closure of a running application. "
+        "Requires the PID and executable path returned by "
+        "search_running_applications. Does not force-kill processes."
+    ),
+    args_model=CloseApplicationArgs,
+    function=close_application
 )

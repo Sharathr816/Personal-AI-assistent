@@ -13,6 +13,7 @@ MVP scope:
 import re
 
 import llm
+from agent.orchestrator import run_agent, update_memory_context, record_exchange
 import memory
 
 
@@ -21,8 +22,12 @@ MAX_MEMORIES_IN_CONTEXT = 10
 
 
 def warmup() -> None:
-    """Warm up the configured Ollama model."""
+    """Initialize Mio's model and load saved memories."""
+
     llm.warmup()
+    memory_context = _build_memory_context()
+    update_memory_context(memory_context)
+    print("\n[MEMORY] Saved memories loaded into Mio.")
 
 
 def _extract_explicit_memory(user_text: str):
@@ -49,7 +54,6 @@ def _extract_explicit_memory(user_text: str):
 
 def _extract_forget_keyword(user_text: str):
     pattern = r"^forget\s+(.+?)\s*[.!?,]*$"
-
     match = re.match(
         pattern,
         user_text.strip(),
@@ -125,11 +129,10 @@ def process_message(user_text: str, on_chunk=None) -> str:
 
     # Check for forget command
     keyword = _extract_forget_keyword(user_text)
-
     if keyword:
         deleted_count = _forget_memories(keyword)
-
         if deleted_count:
+            update_memory_context(_build_memory_context())
             response = (
                 f"I've forgotten {keyword}. "
                 f"Deleted {deleted_count} memories."
@@ -137,36 +140,37 @@ def process_message(user_text: str, on_chunk=None) -> str:
         else:
             response = f"I couldn't find any memories about {keyword}."
 
+        # Record exchange for conversation history
+        record_exchange(user_text, response)
         print(f"\nMio: {response}")
 
         if on_chunk:
             on_chunk(response)
-
         return response
 
     # Check for remember command
     memory_content = _extract_explicit_memory(user_text)
-
     if memory_content:
         saved_memory = memory.save_memory(
             category="explicit",
             content=memory_content,
         )
-
+        update_memory_context(_build_memory_context())
         response = f"Okay, I'll remember that. {saved_memory.content}"
 
+        # Record exchange for conversation history
+        record_exchange(user_text, response)
         print(f"\nMio: {response}")
 
         if on_chunk:
             on_chunk(response)
-
         return response
 
-    # Normal conversation
-    memory_context = _build_memory_context()
-
-    llm.chat(
+    # Normal conversation through the agent
+    # Mio no longer queries SQLite for saved memories on every ordinary message.
+    response = run_agent(
         user_text,
         on_chunk=on_chunk,
-        memory_context=memory_context,
     )
+
+    return response

@@ -10,3 +10,4 @@ noisereduce
 pydantic
 playwright
 pywin32
+psutil

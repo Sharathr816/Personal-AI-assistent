@@ -64,6 +64,7 @@ def connect_brave() -> str:
 
     # Case 2: Reuse an existing Playwright connection.
     if _browser is not None and _browser.is_connected():
+        print("\nAlready connected to brave🤔")
         return "Already connected to Brave."
 
     if os.name != "nt":
@@ -73,6 +74,7 @@ def connect_brave() -> str:
 
     # Case 1: No CDP endpoint exists, so launch Brave.
     if _port_is_available():
+        print("\nTrying to launch brave...🚀")
         BRAVE_PROFILE.mkdir(parents=True, exist_ok=True)
 
         command = [
@@ -107,6 +109,7 @@ def connect_brave() -> str:
             time.sleep(0.5)
 
     if not endpoint_ready:
+        print("Brave's CDP endpoint did not respond within 15 seconds😞")
         raise TimeoutError(
             "Brave's CDP endpoint did not respond within 15 seconds."
         )
@@ -124,6 +127,7 @@ def connect_brave() -> str:
         _playwright = None
         raise
 
+    print("Successfully connected to Brave through CDP 😄✅")
     return "Successfully connected to Brave through CDP."
 
 
@@ -137,10 +141,11 @@ def get_brave_status() -> str:
     contexts = _browser.contexts
 
     if not contexts:
+        print("\nBrave is connected, but no browser context is available 🤔")
         return "Brave is connected, but no browser context is available."
 
     pages = contexts[0].pages
-
+    print("\nBrave connected successfully 😆✅")
     return (
         f"Brave connected successfully.\n"
         f"Browser contexts: {len(contexts)}\n"
@@ -185,6 +190,7 @@ def search_youtube(query: str, max_results: int = 5) -> str:
     if not 1 <= max_results <= 10:
         raise ValueError("max_results must be between 1 and 10.")
 
+    print("\nSearching Youtube...😎")
     page = _get_youtube_page()
     search_url = (
         "https://www.youtube.com/results?search_query="
@@ -197,6 +203,7 @@ def search_youtube(query: str, max_results: int = 5) -> str:
     try:
         results_locator.first.wait_for(timeout=20000)
     except Exception:
+        print("\nHmmm...🤔, I got rejected by you tube. Help me🫠")
         return (
             "YouTube search results did not load. "
             "The page may require sign-in, consent, or CAPTCHA verification."
@@ -242,6 +249,7 @@ def search_youtube(query: str, max_results: int = 5) -> str:
         })
 
     if not results:
+        print("No YouTube video results were found😞")
         return "No YouTube video results were found."
 
     output = [f"YouTube results for: {query}"]
@@ -251,7 +259,7 @@ def search_youtube(query: str, max_results: int = 5) -> str:
             f"\n   Channel: {result['channel'] or 'Unknown'}"
             f"\n   URL: {result['url']}"
         )
-
+    print("\nFound some contents😆✨")
     return "\n".join(output)
 
 
@@ -267,18 +275,22 @@ def play_youtube_video(video_url: str) -> str:
     }
 
     if parsed.scheme != "https" or parsed.hostname not in allowed_hosts:
+        print("\nProblem with url😳")
         raise ValueError("Only valid HTTPS YouTube URLs are allowed.")
 
     if parsed.hostname in {"www.youtube.com", "youtube.com", "m.youtube.com"}:
+        print("\nProblem with url😳")
         if not parsed.path.startswith("/watch"):
             raise ValueError("URL must point to a YouTube video.")
         if not parsed.query or "v=" not in parsed.query:
             raise ValueError("YouTube video URL is missing its video ID.")
 
     elif parsed.hostname == "youtu.be":
+        print("\nProblem with url😳")
         if not parsed.path.strip("/"):
             raise ValueError("YouTube short URL is missing its video ID.")
 
+    print("\nWait a sec, trying to play the video📽️")
     page = _get_youtube_page()
     page.goto(video_url, wait_until="domcontentloaded", timeout=30000)
     video = page.locator("video.html5-main-video")
@@ -286,6 +298,7 @@ def play_youtube_video(video_url: str) -> str:
     try:
         video.wait_for(state="attached", timeout=20000)
     except Exception:
+        print("\nVideo did not load😞")
         return "The YouTube video player did not load."
 
     page.wait_for_timeout(1500)
@@ -301,6 +314,7 @@ def play_youtube_video(video_url: str) -> str:
             play_button.click(timeout=5000)
             page.wait_for_timeout(1500)
         except Exception:
+            print("\nCouldn't attempt playback, sorry🥺")
             return (
                 "The video opened, but Mio could not activate playback. "
                 "It may require interaction or have a playback restriction."
@@ -310,8 +324,10 @@ def play_youtube_video(video_url: str) -> str:
 
     if is_playing:
         title = page.title()
+        print(f"\nPlayback started successfully, enjoy😆")
         return f"Playback started successfully: {title}"
 
+    print("\nHmmm...🤔, I got rejected by you tube during playback. Help me🫠")
     return (
         "The video opened, but playback has not started. "
         "Check for consent, sign-in, age restrictions, or other prompts."

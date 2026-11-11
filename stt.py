@@ -146,7 +146,7 @@ def listen():
                     speaking = True
                     audio_frames.extend(pre_roll)
                     silence_frames = 0
-                    print("[MIC] Speech detected...")
+                    # print("[MIC] Speech detected...")
 
             else:
                 audio_frames.append(frame)
@@ -164,7 +164,7 @@ def listen():
                     )
 
                     if duration >= MIN_SPEECH_DURATION:
-                        print("[MIC] Speech ended.")
+                        # print("[MIC] Speech ended.")
                         return b"".join(audio_frames)
 
                     # Discard noise or very short speech.
@@ -184,7 +184,7 @@ def transcribe(audio_bytes):
         dtype=np.int16 #Converts those integer samples into floating-point numbers.
     ).astype(np.float32) / 32768.0 # Normalizes the audio amplitude into approximately the range -1 to +1.
 
-    print("[STT] Transcribing...")
+    # print("[STT] Transcribing...")
 
     # Audio preprocessing for clarity
     audio = preprocess_audio(audio)

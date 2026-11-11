@@ -42,7 +42,7 @@ def main():
             user_text = stt.transcribe(audio)
 
             if not user_text:
-                print("[STT] Nothing recognized.")
+                # print("[STT] Nothing recognized.")
                 continue
 
             print(f"\nYou: {user_text}")

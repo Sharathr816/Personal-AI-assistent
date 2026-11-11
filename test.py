@@ -192,7 +192,7 @@ import memory
 # memory.update_memory(m.id, content="I am developing Mio.")
 
 # List
-print(memory.get_all_memories())
+# print(memory.get_all_memories())
 
 # Delete
 # memory.delete_memory(m.id)
@@ -232,3 +232,25 @@ print(memory.get_all_memories())
 
 # print("\nTotal explicit memories:",
 #       len(memory.get_all_memories(category="explicit")))
+
+
+# from agent.orchestrator import run_agent
+
+
+# response = run_agent("What time is it?")
+
+
+# from conversation_manager import process_message
+
+# # Test ordinary conversation
+# response = process_message("Hey Mio, how are you?")
+
+
+# # Test tool execution
+# response = process_message("What time is it?")
+
+
+# # Test explicit memory
+# response = process_message("forget running.")
+
+print(memory.get_all_memories())
