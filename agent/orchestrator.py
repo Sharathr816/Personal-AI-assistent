@@ -87,8 +87,8 @@ def display_conversation():
     for msg in messages:
         role = msg.get("role")
         if role == "system":
-            print("\nSystem:",msg.get("content", ""))
-            # continue
+            # print("\nSystem:",msg.get("content", ""))
+            continue
 
         if role == "user":
             # exchange_number += 1

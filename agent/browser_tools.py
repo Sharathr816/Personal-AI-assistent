@@ -279,18 +279,19 @@ def play_youtube_video(video_url: str) -> str:
         raise ValueError("Only valid HTTPS YouTube URLs are allowed.")
 
     if parsed.hostname in {"www.youtube.com", "youtube.com", "m.youtube.com"}:
-        print("\nProblem with url😳")
         if not parsed.path.startswith("/watch"):
+            print("\nProblem with url😳")
             raise ValueError("URL must point to a YouTube video.")
         if not parsed.query or "v=" not in parsed.query:
+            print("\nProblem with url😳")
             raise ValueError("YouTube video URL is missing its video ID.")
 
     elif parsed.hostname == "youtu.be":
-        print("\nProblem with url😳")
         if not parsed.path.strip("/"):
+            print("\nProblem with url😳")
             raise ValueError("YouTube short URL is missing its video ID.")
 
-    print("\nWait a sec, trying to play the video📽️")
+    print("\nWait a sec, trying to play the video😄📽️")
     page = _get_youtube_page()
     page.goto(video_url, wait_until="domcontentloaded", timeout=30000)
     video = page.locator("video.html5-main-video")

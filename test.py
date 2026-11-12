@@ -234,10 +234,9 @@ import memory
 #       len(memory.get_all_memories(category="explicit")))
 
 
-# from agent.orchestrator import run_agent
+from agent.orchestrator import run_agent
 
-
-# response = run_agent("What time is it?")
+response = run_agent("I want yyou  to do these: Open obsedian app first and then play a japanese song playlist, meanwhile you write a note on explaining how and when GPU are used in laptop. At the end, close notepad")
 
 
 # from conversation_manager import process_message
@@ -253,4 +252,4 @@ import memory
 # # Test explicit memory
 # response = process_message("forget running.")
 
-print(memory.get_all_memories())
+# print(memory.get_all_memories())

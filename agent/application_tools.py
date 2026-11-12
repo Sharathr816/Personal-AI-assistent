@@ -43,7 +43,7 @@ def search_applications(query: str, max_results: int = 30) -> str:
     """
     Search Windows shortcuts and return their .lnk and .exe paths.
     """
-    print("\nSearching application...🔃")
+    print("\nSearching application...🔃", query)
     if not query.strip():
         print("Query problem🫥")
         raise ValueError("Application search query cannot be empty.")
@@ -93,7 +93,6 @@ def search_applications(query: str, max_results: int = 30) -> str:
             })
 
             if len(results) >= max_results:
-                print("\nRelevant apps found✅")
                 break
 
         if len(results) >= max_results:
@@ -102,6 +101,7 @@ def search_applications(query: str, max_results: int = 30) -> str:
     if not results:
         print("\nCan't find application.😞")
         return f"No application shortcuts found starting with '{query}'."
+    print("\nRelevant apps found✅\n", results)
 
     output = [f"Matching applications for '{query}':"]
 

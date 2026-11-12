@@ -2,10 +2,8 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict, ValidationError, Field
 
 from agent.note_tools import (
-    WriteNoteArgs,
-    write_note,
-    open_note,
-    OpenNoteArgs
+    write_and_open_note,
+    WriteAndOpenNoteArgs
 )
 
 from agent.browser_tools import (
@@ -113,24 +111,16 @@ register_tool(
     function=get_current_time
 )
 
-# Register notes tool
+# Notes
 register_tool(
-    name="write_note",
+    name="write_and_open_note",
     description=(
-        "Save text content as a UTF-8 text file in the notes directory. "
-        "Use this when the user asks to save or write a note."
+        "Write text content as a UTF-8 text file in the notes directory "
+        "and immediately open the newly saved note in Windows Notepad. "
+        "Use this whenever the user asks to write or save something."
     ),
-    args_model=WriteNoteArgs,
-    function=write_note
-)
-register_tool(
-    name="open_note",
-    description=(
-        "Open an existing saved note in Windows Notepad. "
-        "Provide the note filename or its path inside the notes directory."
-    ),
-    args_model=OpenNoteArgs,
-    function=open_note
+    args_model=WriteAndOpenNoteArgs,
+    function=write_and_open_note
 )
 
 # Brave connection

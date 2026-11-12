@@ -89,6 +89,11 @@ Optimized conversation history to the model to hold 3 user-assistent exchanges, 
 Made memory fixed in messages[1], updating at satrt and when remebering and forgetting.
 Record exchange when remebering or forgetting something, as these branch don't call run_agent (Conversation_manager.py)
 
+12/11/26
+Mixed up the write and open for notes writing in notepad.
+gave up on playlist playback, too much pain.
+Multiple tool execution in one prompt works, need intelligent model to improve accuracy thats all.
+
 ## Note - Stuffs to implement to complete MVP:
  - Implement semantic search.
  - Reduce speech latency, currently takes 3-4 seconds.
