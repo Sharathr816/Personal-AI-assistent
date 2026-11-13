@@ -19,6 +19,12 @@ messages = [
     }
 ]
 
+TOKEN_USAGE = {
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "total_tokens": 0,
+    "llm_calls": 0
+}
 
 
 
@@ -186,12 +192,7 @@ def update_memory_context(memory_context=None):
 # =========================================================
 
 def run_agent(user_input, memory_context=None, on_chunk=None):
-
-    # Update memory only when explicitly provided.
-    # Ordinary messages should pass None.
     update_memory_context(memory_context)
-
-    # Save user message.
     messages.append({
         "role": "user",
         "content": user_input
@@ -204,8 +205,13 @@ def run_agent(user_input, memory_context=None, on_chunk=None):
 
     response_text = ""
 
-    # Allow multiple tool-call iterations.
+    # Token tracking for this exchange
+    input_tokens = 0
+    output_tokens = 0
+    llm_calls = 0
+
     for _ in range(10):
+
         response = ollama.chat(
             model=MODEL,
             messages=messages,
@@ -214,13 +220,19 @@ def run_agent(user_input, memory_context=None, on_chunk=None):
             keep_alive=KEEP_ALIVE,
             think=False
         )
+
+        # Collect token usage
+        input_tokens += response.prompt_eval_count or 0
+        output_tokens += response.eval_count or 0
+        llm_calls += 1
+
         assistant_message = response.message
 
-        # -------------------------------------------------
         # FINAL ASSISTANT RESPONSE
-        # -------------------------------------------------
         if not assistant_message.tool_calls:
+
             response_text = assistant_message.content or ""
+
             messages.append({
                 "role": "assistant",
                 "content": response_text
@@ -228,17 +240,15 @@ def run_agent(user_input, memory_context=None, on_chunk=None):
 
             break
 
-        # -------------------------------------------------
         # ASSISTANT TOOL CALLS
-        # -------------------------------------------------
-
-        # Convert Ollama SDK message into a dictionary.
         assistant_dict = assistant_message.model_dump(
             exclude_none=True
         )
+
         messages.append(assistant_dict)
 
         for tool_call in assistant_message.tool_calls:
+
             name = tool_call.function.name
             arguments = tool_call.function.arguments or {}
 
@@ -248,7 +258,6 @@ def run_agent(user_input, memory_context=None, on_chunk=None):
             except Exception as error:
                 result = f"Tool execution failed: {error}"
 
-            # Save tool result in conversation history.
             messages.append({
                 "role": "tool",
                 "tool_name": name,
@@ -257,27 +266,34 @@ def run_agent(user_input, memory_context=None, on_chunk=None):
 
     else:
         response_text = "I couldn't complete that request."
+
         messages.append({
             "role": "assistant",
             "content": response_text
         })
-
-    # -----------------------------------------------------
+   
     # HISTORY MANAGEMENT
-    # -----------------------------------------------------
-
     trim_history(max_exchanges=3)
+    for contents in messages:
+            print(contents)
 
-    # -----------------------------------------------------
-    # TERMINAL DISPLAY
-    # -----------------------------------------------------
+    # TOKEN USAGE
+    TOKEN_USAGE["input_tokens"] = input_tokens
+    TOKEN_USAGE["output_tokens"] = output_tokens
+    TOKEN_USAGE["total_tokens"] = input_tokens + output_tokens
+    TOKEN_USAGE["llm_calls"] = llm_calls
 
-    display_conversation()
+    # print("\n========== TOKEN USAGE ==========")
+    # print(f"Input tokens  : {input_tokens}")
+    # print(f"Output tokens : {output_tokens}")
+    # print(f"Total tokens  : {input_tokens + output_tokens}")
+    # print(f"LLM calls     : {llm_calls}")
+    # print("=================================\n")
 
-    # -----------------------------------------------------
+    # # TERMINAL DISPLAY
+    # display_conversation()
+
     # TEXT TO SPEECH
-    # -----------------------------------------------------
-
     if response_text and on_chunk:
         on_chunk(response_text)
 

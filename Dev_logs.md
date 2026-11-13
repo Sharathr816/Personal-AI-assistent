@@ -142,6 +142,12 @@ added body animations breathing and swaying..
 Avatar done with blink, breathing and slight nod
 No expressions and gestures.
 
+Added token usage tracking.
+
+num_ctx = Maximum number of tokens the model can handle in a single request including input and generated output, not the whole tool calling loop.
+num_predict: 256 — Maximum number of tokens the model can generate in one response.
+num_ctx and num_predict apply to each individual LLM request, not the entire agent interaction.
+
 ## Note - Stuffs to implement to complete MVP:
  - The model problem with hardware, dumb model fast, smart model slow.
  - Optimize whisper, so that it can properly transcribe.
