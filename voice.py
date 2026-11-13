@@ -1,6 +1,10 @@
 import re
 import time
 import conversation_manager
+from avatar.vmc_controller import VMCController
+from avatar.avatar_manager import AvatarManager
+import threading
+import random
 
 # import sounddevice as sd
 # from audio_config import INPUT_DEVICE, OUTPUT_DEVICE
@@ -12,15 +16,44 @@ import conversation_manager
 import stt
 from tts import MioTTS
 
+def blink_loop(avatar, stop_event):
+    while not stop_event.is_set():
+        if stop_event.wait(random.uniform(3.0, 6.0)):
+            break
+
+        avatar.expressions.blink(duration=0.15)
+
+
 
 def main():
     print("\n==============================")
     print("       MIO VOICE SYSTEM")
     print("==============================\n")
 
-    # Initialize TTS once.
-    tts = MioTTS()
-    tts.start() 
+    vmc = VMCController(
+    host="127.0.0.1",
+    port=39539
+    )
+
+    # Initialize avatar using the existing VMC connection.
+    avatar = AvatarManager(vmc=vmc)
+
+    # Start continuous idle animation.
+    avatar.start_idle()
+
+    blink_stop = threading.Event()
+
+    blink_thread = threading.Thread(
+        target=blink_loop,
+        args=(avatar, blink_stop),
+        daemon=True
+        )
+
+    blink_thread.start()
+
+    # Initialize TTS using the same VMC connection.
+    tts = MioTTS(vmc=vmc)
+    tts.start()
 
     # Warm up your existing Qwen model.
     conversation_manager.warmup()
@@ -94,7 +127,11 @@ def main():
         print("\n[VOICE] Stopping...")
 
     finally:
+        blink_stop.set()
+        blink_thread.join(timeout=1)
         tts.stop()
+        avatar.close()
+        vmc.close()
         print("Mio offline.")
 
 

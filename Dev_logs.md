@@ -94,7 +94,55 @@ Mixed up the write and open for notes writing in notepad.
 gave up on playlist playback, too much pain.
 Multiple tool execution in one prompt works, need intelligent model to improve accuracy thats all.
 
+num_ctx > means gpu a lot used.
+
+Created Mio's avatar using vrstudio
+
+13/11/26
+vseeface downloaded and mio avatar is up and running - vrm0.0 not vrm1.0.
+Enables vmc reciever, python can use udp protocol to communicate.
+Approach:
+    - LLM decides, Python executes. Never make the LLM calculate raw bone rotations.
+    - Voice and avatar must synchronize. Speech playback and lip synchronization should share the same audio lifecycle.
+    - Animations must be independent. Facial expressions shouldn't accidentally interrupt arm movements.
+    - Use smooth transitions. No sudden snapping between poses.
+    - Keep VSeeFace as the renderer. Python handles the intelligence and motion control.
+VMC: Virtual Motion Capture protocol.
+OSC: Open Sound Control, the message format.
+UDP: The network transport.
+127.0.0.1: Localhost, because both applications run on your laptop.
+39539: Default VMC receiver port.
+python-osc to construct correctly formatted OSC packets.
+
+Emotions:
+VRM 0.x uses standardized blendshape presets. We'll map Mio's expressive states to those presets instead of assuming the LLM knows the underlying VRM names.
+
+Lip sync:
+The approach:
+    - Read the actual audio being played.
+    - Calculate its RMS amplitude.
+    - Convert amplitude into mouth-opening intensity.
+    - Send the A blendshape through VMC.
+    - Close Mio's mouth when playback finishes.
+We'll use the VRM vowel blendshape A for this first lip-sync implementation.
+Desired behaviour	Change
+Mouth opens more easily	Decrease 350
+Mouth opens wider	    Decrease 5000
+Mouth opens less	    Increase 350
+Mouth opens less widely	Increase 5000
+
+Head and eye movement:
+VMC controls humanoid bones using this OSC address:/VMC/Ext/Bone/Pos
+handle head and eye movement independently of facial expressions.
+
+Scraped arm and hand animations
+
+added body animations breathing and swaying..
+
+Avatar done with blink, breathing and slight nod
+No expressions and gestures.
+
 ## Note - Stuffs to implement to complete MVP:
- - Implement semantic search.
- - Reduce speech latency, currently takes 3-4 seconds.
+ - The model problem with hardware, dumb model fast, smart model slow.
  - Optimize whisper, so that it can properly transcribe.
+ - Use local as fallback, main as online gpt.

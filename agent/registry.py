@@ -155,6 +155,7 @@ register_tool(
 register_tool(
     name="play_youtube_video",
     description=(
+        "Use search_youtube before executing this tool mandatorily"
         "Open a selected YouTube video URL in Mio's Brave browser "
         "and attempt to start playback. Use a URL returned by "
         "search_youtube."
@@ -178,6 +179,7 @@ register_tool(
 register_tool(
     name="open_application",
     description=(
+        "Use search_applications mandatorily before executing this tool"
         "Launch an application using its Windows shortcut path. "
         "Use a shortcut path returned by search_applications."
     ),
@@ -199,6 +201,7 @@ register_tool(
 register_tool(
     name="close_application",
     description=(
+        "use search_running_applications madatorily before using this tool"
         "Request graceful closure of a running application. "
         "Requires the PID and executable path returned by "
         "search_running_applications. Does not force-kill processes."
