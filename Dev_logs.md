@@ -148,7 +148,18 @@ num_ctx = Maximum number of tokens the model can handle in a single request incl
 num_predict: 256 — Maximum number of tokens the model can generate in one response.
 num_ctx and num_predict apply to each individual LLM request, not the entire agent interaction.
 
-## Note - Stuffs to implement to complete MVP:
- - The model problem with hardware, dumb model fast, smart model slow.
- - Optimize whisper, so that it can properly transcribe.
- - Use local as fallback, main as online gpt.
+
+14/11/26
+Using requesty models for mio's brain.
+Done, now on internet requesty model is used, if any error in requesty, ollama is used.
+created a latency routing policy in requesty for faster responses(Have choosen four models for this).
+Encountered daily request limit on requesty.
+
+Done with MVP.
+Dec 1 -> To be continued....
+
+## Note - Mandatory solutions needed for in the future:
+ - The model dilemma (hardware), dumb model fast, smart model slow.
+ - Optimize whisper, so that it can properly transcribe - Gives initial prompt when havent spoken anything.
+ - Free brain optimization - Local(Ollama) and cloud(Free API's)
+ - Finetuning model on personality and its purpose.

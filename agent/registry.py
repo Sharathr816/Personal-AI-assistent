@@ -91,7 +91,7 @@ def execute_tool(name, arguments):
     except ValidationError as error:
         raise ValueError(f"Invalid tool arguments: {error}")
 
-    # Execute only after successful validation
+    # Execute only after successful validation (Executes the registered function.)
     return tool["function"](**validated_args.model_dump()) # Converts the validated arguments into a dictionary and passes them to the Python function.
 
 

@@ -12,3 +12,5 @@ playwright
 pywin32
 psutil
 python-osc
+openai
+dotenv

@@ -55,7 +55,7 @@ def main():
     tts = MioTTS(vmc=vmc)
     tts.start()
 
-    # Warm up your existing Qwen model.
+    # Warm up your existing model.
     conversation_manager.warmup()
 
     print("\nMio is ready! Speak to start.")
